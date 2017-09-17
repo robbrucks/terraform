@@ -2,6 +2,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
+terraform {
+  backend "s3" {
+    bucket = "terraform-up-and-running-state-rob-brucks"
+    key    = "robbrucks.tfstate"
+    region = "us-east-1"
+  }
+}
+
 data "aws_availability_zones" "all" {}
 
 variable "server_port" {
@@ -70,7 +78,7 @@ resource "aws_launch_configuration" "example" {
 
   user_data = <<-EOF
               #!/bin/bash
-              echo "Hello, World" > index.html
+              echo "Hello, World: " $RANDOM > index.html
               nohup busybox httpd -f -p "${var.server_port}" &
               EOF
 
